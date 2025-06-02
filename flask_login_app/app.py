@@ -17,6 +17,14 @@ def init_db():
                     password TEXT NOT NULL
                 )
             ''')
+            conn.execute('''
+                CREATE TABLE dates (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL,
+                    date TEXT NOT NULL
+                )
+            ''')
+
 
 @app.route('/')
 def index():
@@ -66,6 +74,52 @@ def logout():
     flash('Logged out successfully.')
     return redirect(url_for('login'))
 
+@app.route('/select-date', methods=['GET', 'POST'])
+def select_date():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        order_date = request.form['order_date']
+        username = session['username']
+
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute('INSERT INTO dates (username, date) VALUES (?, ?)', (username, order_date))
+            conn.commit()
+
+        # ✅ After saving, redirect to the food selection page
+        return redirect(url_for('food_selection'))
+
+    return render_template('select_date.html')
+
+
+
+@app.route('/food-selection')
+def food_selection():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('food_selection.html')
+
+@app.route('/hot-food')
+def hot_food():
+    return "<h2>Hot Food Page - Coming Soon!</h2>"
+
+@app.route('/cold-food')
+def cold_food():
+    return "<h2>Cold Food Page - Coming Soon!</h2>"
+
+@app.route('/drinks')
+def drinks():
+    return "<h2>Drinks Page - Coming Soon!</h2>"
+
+@app.route('/desserts')
+def desserts():
+    return "<h2>Desserts Page - Coming Soon!</h2>"
+
+
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, host='0.0.0.0')
+

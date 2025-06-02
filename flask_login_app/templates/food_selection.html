@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Selection</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="home-container">
+    <h1>Select Food Category</h1>
+
+    <a href="{{ url_for('hot_food') }}">
+      <button>Hot Food</button>
+    </a>
+
+    <a href="{{ url_for('cold_food') }}">
+      <button>Cold Food</button>
+    </a>
+
+    <a href="{{ url_for('drinks') }}">
+      <button>Drinks</button>
+    </a>
+
+    <a href="{{ url_for('desserts') }}">
+      <button>Desserts</button>
+    </a>
+
+    <br><br>
+    <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+  </div>
+</body>
+</html>
