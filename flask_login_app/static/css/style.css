@@ -55,3 +55,327 @@ button:hover {
     
 }
 
+/* ===== Login Page Specific Styling ===== */
+
+#login-body {
+    background-color: #474343;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+#login-title {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#login-form input[type="text"],
+#login-form input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#login-button {
+    background-color: #f1ee27;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#login-button:hover {
+    background-color: #e7f33b;
+}
+
+#register-link {
+    display: block;
+    margin-top: 15px;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+#register-link:hover {
+    text-decoration: underline;
+}
+
+#login-messages {
+    color: red;
+    margin-bottom: 10px;
+    list-style-type: none;
+    padding: 0;
+}
+
+/* ===== Registration Page Styling ===== */
+
+#login-body {
+    background-color: #f7faff;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+}
+
+#login-title {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+#login-form label {
+    display: block;
+    text-align: left;
+    margin: 10px 0 4px;
+    font-weight: bold;
+    color: #34495e;
+}
+
+#login-form input[type="text"],
+#login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccd6dd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#login-button {
+    background-color: #27ae60;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#login-button:hover {
+    background-color: #219150;
+}
+
+#register-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: #2980b9;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+#register-link:hover {
+    text-decoration: underline;
+}
+
+#login-messages {
+    color: #e74c3c;
+    margin-bottom: 10px;
+    list-style-type: none;
+    padding: 0;
+    font-size: 14px;
+}
+
+/* Password strength bar */
+#password-strength {
+    width: 100%;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+#strength-bar {
+    height: 100%;
+    width: 0%;
+    background-color: red;
+    transition: width 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+#strength-text {
+  font-size: 14px;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+/* Select Date Page Styles */
+
+#date-page-body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#date-container {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
+#date-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+#calendar-input {
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+#date-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#date-button:hover {
+  background-color: #45a049;
+}
+
+/* Reset some basics */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.food-selection-container {
+  background: #ffffffdd;
+  padding: 40px 60px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.food-selection-container h1 {
+  font-size: 2.5rem;
+  color: #ff6f61;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+.food-link {
+  display: block;
+  margin: 15px 0;
+  text-decoration: none;
+}
+
+.food-button {
+  width: 100%;
+  padding: 15px 0;
+  font-size: 1.3rem;
+  color: white;
+  background: #ff6f61;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(255, 111, 97, 0.4);
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.food-button:hover {
+  background: #ff836f;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 131, 111, 0.6);
+}
+
+.food-button:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px rgba(255, 111, 97, 0.4);
+}
+
+.back-home {
+  margin-top: 40px;
+}
+
+.back-button {
+  background: #4a90e2;
+  width: 100%;
+  padding: 14px 0;
+  font-size: 1.2rem;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.back-button:hover {
+  background: #6ba0ff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(107, 160, 255, 0.6);
+}
+
+.back-button:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+}

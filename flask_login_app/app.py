@@ -48,19 +48,37 @@ def login():
             flash('Login failed. Check your username and password.')
     return render_template('login.html')
 
+import re
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        try:
-            with sqlite3.connect(DB_PATH) as conn:
-                conn.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-            flash('Registered successfully! You can now log in.')
-            return redirect(url_for('login'))
-        except sqlite3.IntegrityError:
-            flash('Username already exists.')
+        confirm_password = request.form['confirm_password']
+
+        # Password validation rules
+        if password != confirm_password:
+            flash('Passwords do not match.')
+        elif len(password) < 8 or len(password) > 30:
+            flash('Password must be between 8 and 30 characters.')
+        elif not re.search(r'[A-Z]', password):
+            flash('Password must contain at least one uppercase letter.')
+        elif not re.search(r'[0-9]', password):
+            flash('Password must contain at least one number.')
+        elif not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            flash('Password must contain at least one special character.')
+        else:
+            try:
+                with sqlite3.connect(DB_PATH) as conn:
+                    conn.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+                flash('Registered successfully! You can now log in.')
+                return redirect(url_for('login'))
+            except sqlite3.IntegrityError:
+                flash('Username already exists.')
+
     return render_template('register.html')
+
 
 @app.route('/home')
 def home():

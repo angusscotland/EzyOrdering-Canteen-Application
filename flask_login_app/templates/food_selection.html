@@ -1,33 +1,36 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Food Selection</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body>
-  <div class="home-container">
+  <div class="food-selection-container">
     <h1>Select Food Category</h1>
 
-    <a href="{{ url_for('hot_food') }}">
-      <button>Hot Food</button>
+    <a href="{{ url_for('hot_food') }}" class="food-link">
+      <button class="food-button">Hot Food</button>
     </a>
 
-    <a href="{{ url_for('cold_food') }}">
-      <button>Cold Food</button>
+    <a href="{{ url_for('cold_food') }}" class="food-link">
+      <button class="food-button">Cold Food</button>
     </a>
 
-    <a href="{{ url_for('drinks') }}">
-      <button>Drinks</button>
+    <a href="{{ url_for('drinks') }}" class="food-link">
+      <button class="food-button">Drinks</button>
     </a>
 
-    <a href="{{ url_for('desserts') }}">
-      <button>Desserts</button>
+    <a href="{{ url_for('desserts') }}" class="food-link">
+      <button class="food-button">Desserts</button>
     </a>
 
-    <br><br>
-    <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+    <div class="back-home">
+      <a href="{{ url_for('home') }}">
+        <button class="back-button">Back to Home</button>
+      </a>
+    </div>
   </div>
 </body>
 </html>

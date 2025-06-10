@@ -2,23 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Select Date</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-  <div class="home-container">
-    <h1>Select a Date for Your Order</h1>
-    <form method="POST">
-     <label for="order_date">Select a date for your order:</label><br><br>
-     <input type="date" name="order_date" required>
-     <br><br>
-     <input type="submit" value="Continue to Food Selection">
-    </form>
+<body id="date-page-body">
 
+  <div id="date-container">
+    <h2>Select a Date</h2>
+    <form method="POST" action="{{ url_for('select_date') }}">
+      <input type="date" name="order_date" id="calendar-input" required>
+      <br><br>
+      <input type="submit" value="Continue to Food Selection" id="date-button">
     </form>
-    <br>
-    <a href="{{ url_for('home') }}"><button>Back to Home</button></a
   </div>
+
 </body>
 </html>

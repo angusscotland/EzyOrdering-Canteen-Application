@@ -1,17 +1,99 @@
 <!doctype html>
-<html>
-<head><title>Register</title></head>
-<body>
-  <h2>Register</h2>
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
-    {% endif %}
-  {% endwith %}
-  <form method="POST">
-    Username: <input type="text" name="username"><br>
-    Password: <input type="password" name="password"><br>
-    <input type="submit" value="Register">
-  </form>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    #password-strength {
+      width: 100%;
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    #strength-bar {
+      height: 100%;
+      width: 0%;
+      background-color: red;
+      transition: width 0.3s ease-in-out;
+    }
+
+    #strength-text {
+      margin-top: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      color: red;
+    }
+  </style>
+</head>
+<body id="login-body">
+  <div id="login-container">
+    <h2 id="login-title">Register</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul id="login-messages">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" id="login-form">
+      <label for="username">Username:</label>
+      <input type="text" name="username" id="login-username" maxlength="20" required><br>
+
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password" maxlength="30" required>
+      <div id="password-strength">
+        <div id="strength-bar"></div>
+      </div>
+      <p id="strength-text">Password strength: <span>Very Weak</span></p>
+
+      <label for="confirm-password">Confirm Password:</label>
+      <input type="password" name="confirm_password" id="confirm-password" required><br>
+
+      <input type="submit" value="Register" id="login-button">
+    </form>
+
+    <a href="{{ url_for('login') }}" id="register-link">Back to login</a>
+  </div>
+
+  <script>
+    const passwordInput = document.getElementById("password");
+    const strengthBar = document.getElementById("strength-bar");
+    const strengthText = document.getElementById("strength-text").querySelector("span");
+
+    passwordInput.addEventListener("input", () => {
+      const value = passwordInput.value;
+      let strength = 0;
+
+      if (value.length >= 8) strength += 1;
+      if (/[A-Z]/.test(value)) strength += 1;
+      if (/[0-9]/.test(value)) strength += 1;
+      if (/[^A-Za-z0-9]/.test(value)) strength += 1;
+
+      const strengthPercentage = (strength / 4) * 100;
+      strengthBar.style.width = strengthPercentage + "%";
+
+      if (strength <= 1) {
+        strengthBar.style.backgroundColor = "red";
+        strengthText.textContent = "Very Weak";
+        strengthText.style.color = "red";
+      } else if (strength === 2 || strength === 3) {
+        strengthBar.style.backgroundColor = "orange";
+        strengthText.textContent = "Moderate";
+        strengthText.style.color = "orange";
+      } else {
+        strengthBar.style.backgroundColor = "green";
+        strengthText.textContent = "Strong";
+        strengthText.style.color = "green";
+      }
+    });
+  </script>
 </body>
 </html>
