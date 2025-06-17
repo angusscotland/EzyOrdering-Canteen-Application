@@ -24,7 +24,29 @@ def init_db():
                     date TEXT NOT NULL
                 )
             ''')
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS hot_food_orders (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    item TEXT NOT NULL,
+                    quantity INTEGER NOT NULL
+                )
+            ''')
 
+
+def save_order_to_db(order_items):
+    """
+    Save order items to the hot_food_orders table.
+    order_items: dict of item_name (str) -> quantity (int)
+    """
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        for item, qty in order_items.items():
+            if qty > 0:
+                cursor.execute(
+                    "INSERT INTO hot_food_orders (item, quantity) VALUES (?, ?)",
+                    (item, qty)
+                )
+        conn.commit()
 
 @app.route('/')
 def index():
@@ -119,10 +141,6 @@ def food_selection():
         return redirect(url_for('login'))
     return render_template('food_selection.html')
 
-@app.route('/hot-food')
-def hot_food():
-    return "<h2>Hot Food Page - Coming Soon!</h2>"
-
 @app.route('/cold-food')
 def cold_food():
     return "<h2>Cold Food Page - Coming Soon!</h2>"
@@ -135,7 +153,27 @@ def drinks():
 def desserts():
     return "<h2>Desserts Page - Coming Soon!</h2>"
 
+from flask import Flask, render_template, request, redirect, url_for
 
+app = Flask(__name__)
+
+@app.route('/hot_food', methods=['GET', 'POST'])
+def hot_food():
+    if request.method == 'POST':
+        order_items = {
+            'sausage_roll': int(request.form.get('sausage_roll_qty', 0)),
+            'plain_pie': int(request.form.get('plain_pie_qty', 0)),
+            'chicken_burger': int(request.form.get('chicken_burger_qty', 0)),
+            'nuggets': int(request.form.get('nuggets_qty', 0))
+        }
+
+        save_order_to_db(order_items)
+
+        # Redirect back to food_selection page after saving
+        return redirect(url_for('food_selection'))
+
+    # For GET requests, render the hot_food page as usual
+    return render_template('hot_food.html')
 
 if __name__ == '__main__':
     init_db()

@@ -51,7 +51,7 @@ button {
 }
 
 button:hover {
-    background-color: #ee4d4d;
+    background-color: #ccb23f;
     
 }
 
@@ -117,7 +117,7 @@ button:hover {
 }
 
 #login-messages {
-    color: red;
+    color: rgb(0, 0, 0);
     margin-bottom: 10px;
     list-style-type: none;
     padding: 0;
@@ -156,7 +156,7 @@ button:hover {
     text-align: left;
     margin: 10px 0 4px;
     font-weight: bold;
-    color: #34495e;
+    color: #bca42a;
 }
 
 #login-form input[type="text"],
@@ -170,7 +170,7 @@ button:hover {
 }
 
 #login-button {
-    background-color: #27ae60;
+    background-color: #000000;
     color: white;
     padding: 12px 20px;
     font-size: 16px;
@@ -183,7 +183,7 @@ button:hover {
 }
 
 #login-button:hover {
-    background-color: #219150;
+    background-color: #858670;
 }
 
 #register-link {
@@ -226,6 +226,7 @@ button:hover {
 }
 
 #strength-text {
+  color: black;
   font-size: 14px;
   margin-top: 5px;
   font-weight: bold;
@@ -270,7 +271,7 @@ button:hover {
 }
 
 #date-button {
-  background-color: #4CAF50;
+  background-color: #000000;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -281,7 +282,7 @@ button:hover {
 }
 
 #date-button:hover {
-  background-color: #45a049;
+  background-color: #b69e33;
 }
 
 /* Reset some basics */
@@ -293,7 +294,7 @@ button:hover {
 }
 
 body {
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #000000 100%);
   min-height: 100vh;
   display: flex;
   justify-content: center;

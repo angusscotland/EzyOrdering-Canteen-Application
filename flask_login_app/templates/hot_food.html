@@ -2,28 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hot Food</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-  <div class="home-container">
-    <h1>Hot Food Menu</h1>
+<body id="date-page-body">
 
-    <form method="POST">
-      <label for="hot_item">Choose a hot food item:</label><br><br>
-      <select name="hot_item" id="hot_item" required>
-        <option value="">-- Select --</option>
-        <option value="Pizza">Pizza</option>
-        <option value="Pasta">Pasta</option>
-        <option value="Burger">Burger</option>
-        <option value="Lasagna">Lasagna</option>
-      </select><br><br>
-      <input type="submit" value="Add to Order">
+  <div id="date-container">
+    <h2>Hot Food Selection</h2>
+    <form method="POST" enctype="multipart/form-data">
+
+      <!-- Sausage Roll -->
+      <div style="margin-bottom: 20px;">
+        <img src="{{ url_for('static', filename='images/sausage_roll.jpg') }}" alt="Sausage Roll" style="width: 200px; height: auto; border-radius: 8px;">
+        <p><strong>Description:</strong> Plain Sausage Roll</p>
+        <label for="sausage_roll_qty">Quantity:</label>
+        <select name="sausage_roll_qty" id="sausage_roll_qty">
+          {% for i in range(0, 11) %}
+            <option value="{{ i }}">{{ i }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Plain Pie -->
+      <div style="margin-bottom: 20px;">
+        <img src="{{ url_for('static', filename='images/plain_pie.jpg') }}" alt="Plain Pie" style="width: 200px; height: auto; border-radius: 8px;">
+        <p><strong>Description:</strong> Plain Pie</p>
+        <label for="plain_pie_qty">Quantity:</label>
+        <select name="plain_pie_qty" id="plain_pie_qty">
+          {% for i in range(0, 11) %}
+            <option value="{{ i }}">{{ i }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Chicken Burger -->
+      <div style="margin-bottom: 20px;">
+        <img src="{{ url_for('static', filename='images/chicken_burger.jpg') }}" alt="Chicken Burger" style="width: 200px; height: auto; border-radius: 8px;">
+        <p><strong>Description:</strong> Chicken Burger</p>
+        <label for="chicken_burger_qty">Quantity:</label>
+        <select name="chicken_burger_qty" id="chicken_burger_qty">
+          {% for i in range(0, 11) %}
+            <option value="{{ i }}">{{ i }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Nuggets -->
+      <div style="margin-bottom: 20px;">
+        <img src="{{ url_for('static', filename='images/nuggets.jpg') }}" alt="Nuggets" style="width: 200px; height: auto; border-radius: 8px;">
+        <p><strong>Description:</strong> Nuggets</p>
+        <label for="nuggets_qty">Quantity:</label>
+        <select name="nuggets_qty" id="nuggets_qty">
+          {% for i in range(0, 11) %}
+            <option value="{{ i }}">{{ i }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <input type="submit" value="Add to Order" id="date-button">
+
     </form>
-
-    <br>
-    <a href="{{ url_for('food_selection') }}"><button>Back</button></a>
   </div>
+
 </body>
 </html>
