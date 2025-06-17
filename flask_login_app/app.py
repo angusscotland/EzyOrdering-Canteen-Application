@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from pathlib import Path
+import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -27,15 +28,15 @@ def init_db():
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS hot_food_orders (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL,
                     item TEXT NOT NULL,
                     quantity INTEGER NOT NULL
                 )
             ''')
 
-
-def save_order_to_db(order_items):
+def save_order_to_db(username, order_items):
     """
-    Save order items to the hot_food_orders table.
+    Save order items to the hot_food_orders table with username.
     order_items: dict of item_name (str) -> quantity (int)
     """
     with sqlite3.connect(DB_PATH) as conn:
@@ -43,8 +44,8 @@ def save_order_to_db(order_items):
         for item, qty in order_items.items():
             if qty > 0:
                 cursor.execute(
-                    "INSERT INTO hot_food_orders (item, quantity) VALUES (?, ?)",
-                    (item, qty)
+                    "INSERT INTO hot_food_orders (username, item, quantity) VALUES (?, ?, ?)",
+                    (username, item, qty)
                 )
         conn.commit()
 
@@ -69,8 +70,6 @@ def login():
         else:
             flash('Login failed. Check your username and password.')
     return render_template('login.html')
-
-import re
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -101,7 +100,6 @@ def register():
 
     return render_template('register.html')
 
-
 @app.route('/home')
 def home():
     if 'username' in session:
@@ -128,18 +126,39 @@ def select_date():
             cursor.execute('INSERT INTO dates (username, date) VALUES (?, ?)', (username, order_date))
             conn.commit()
 
-        # ✅ After saving, redirect to the food selection page
         return redirect(url_for('food_selection'))
 
     return render_template('select_date.html')
-
-
 
 @app.route('/food-selection')
 def food_selection():
     if 'username' not in session:
         return redirect(url_for('login'))
-    return render_template('food_selection.html')
+
+    username = session['username']
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT item, SUM(quantity) FROM hot_food_orders WHERE username = ? GROUP BY item",
+            (username,)
+        )
+        orders = cursor.fetchall()
+
+    return render_template('food_selection.html', orders=orders)
+
+@app.route('/clear_cart', methods=['POST'])
+def clear_cart():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM hot_food_orders WHERE username = ?", (username,))
+        conn.commit()
+
+    flash('Cart cleared successfully!')
+    return redirect(url_for('food_selection'))
 
 @app.route('/cold-food')
 def cold_food():
@@ -153,12 +172,11 @@ def drinks():
 def desserts():
     return "<h2>Desserts Page - Coming Soon!</h2>"
 
-from flask import Flask, render_template, request, redirect, url_for
-
-app = Flask(__name__)
-
 @app.route('/hot_food', methods=['GET', 'POST'])
 def hot_food():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         order_items = {
             'sausage_roll': int(request.form.get('sausage_roll_qty', 0)),
@@ -167,15 +185,12 @@ def hot_food():
             'nuggets': int(request.form.get('nuggets_qty', 0))
         }
 
-        save_order_to_db(order_items)
+        save_order_to_db(session['username'], order_items)
 
-        # Redirect back to food_selection page after saving
         return redirect(url_for('food_selection'))
 
-    # For GET requests, render the hot_food page as usual
     return render_template('hot_food.html')
 
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, host='0.0.0.0')
-

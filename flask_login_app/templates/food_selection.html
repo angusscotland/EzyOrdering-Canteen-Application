@@ -14,7 +14,6 @@
       <button class="food-button">Hot Food</button>
     </a>
 
-
     <a href="{{ url_for('cold_food') }}" class="food-link">
       <button class="food-button">Cold Food</button>
     </a>
@@ -31,6 +30,23 @@
       <a href="{{ url_for('home') }}">
         <button class="back-button">Back to Home</button>
       </a>
+    </div>
+
+    <!-- Cart Summary Section -->
+    <div class="cart-summary" style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px;">
+      <h2>Your Cart</h2>
+      {% if orders %}
+        <ul>
+          {% for item, qty in orders %}
+            <li>{{ qty }} × {{ item.replace('_', ' ').title() }}</li>
+          {% endfor %}
+        </ul>
+        <form method="POST" action="{{ url_for('clear_cart') }}">
+          <button type="submit">Clear Cart</button>
+        </form>
+      {% else %}
+        <p>Your cart is empty.</p>
+      {% endif %}
     </div>
   </div>
 </body>
