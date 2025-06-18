@@ -8,12 +8,19 @@ app.secret_key = 'your_secret_key'
 
 DB_PATH = Path('users.db')
 
-# Prices for hot food items
+# Prices and display names for hot food items
 ITEM_PRICES = {
     'sausage_roll': 4.50,
     'plain_pie': 5.50,
     'chicken_burger': 6.00,
     'nuggets': 4.00
+}
+
+PRODUCT_NAMES = {
+    'sausage_roll': 'Plain Sausage Roll',
+    'plain_pie': 'Plain Pie',
+    'chicken_burger': 'Chicken Burger',
+    'nuggets': 'Nuggets'
 }
 
 def init_db():
@@ -39,6 +46,23 @@ def init_db():
                     username TEXT NOT NULL,
                     item TEXT NOT NULL,
                     quantity INTEGER NOT NULL
+                )
+            ''')
+            # Now completed_orders table with columns for each item qty and subtotal
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS completed_orders (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL,
+                    order_date TEXT NOT NULL,
+                    sausage_roll_qty INTEGER DEFAULT 0,
+                    sausage_roll_subtotal REAL DEFAULT 0,
+                    plain_pie_qty INTEGER DEFAULT 0,
+                    plain_pie_subtotal REAL DEFAULT 0,
+                    chicken_burger_qty INTEGER DEFAULT 0,
+                    chicken_burger_subtotal REAL DEFAULT 0,
+                    nuggets_qty INTEGER DEFAULT 0,
+                    nuggets_subtotal REAL DEFAULT 0,
+                    total REAL NOT NULL
                 )
             ''')
 
@@ -141,12 +165,15 @@ def food_selection():
     username = session['username']
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
-        # Get the sum of quantities per item for the user
         cursor.execute(
             "SELECT item, SUM(quantity) FROM hot_food_orders WHERE username = ? GROUP BY item",
             (username,)
         )
         orders = cursor.fetchall()
+
+        cursor.execute("SELECT date FROM dates WHERE username = ? ORDER BY id DESC LIMIT 1", (username,))
+        date_row = cursor.fetchone()
+        order_date = date_row[0] if date_row else None
 
     cart_items = []
     total = 0.0
@@ -155,7 +182,7 @@ def food_selection():
         subtotal = round(qty * price, 2)
         total += subtotal
         cart_items.append({
-            'name': item.replace('_', ' ').title(),
+            'name': PRODUCT_NAMES.get(item, item),
             'qty': qty,
             'price': price,
             'subtotal': subtotal
@@ -163,8 +190,7 @@ def food_selection():
 
     total = round(total, 2)
 
-    return render_template('food_selection.html', cart_items=cart_items, total=total)
-
+    return render_template('food_selection.html', cart_items=cart_items, total=total, order_date=order_date)
 
 @app.route('/clear_cart', methods=['POST'])
 def clear_cart():
@@ -215,11 +241,69 @@ def payment():
     if 'username' not in session:
         return redirect(url_for('login'))
 
+    username = session['username']
+
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT item, SUM(quantity) FROM hot_food_orders WHERE username = ? GROUP BY item",
+            (username,)
+        )
+        orders = cursor.fetchall()
+
+        cursor.execute("SELECT date FROM dates WHERE username = ? ORDER BY id DESC LIMIT 1", (username,))
+        date_row = cursor.fetchone()
+        order_date = date_row[0] if date_row else None
+
+    # Build cart_items list for template
+    cart_items = []
+    total = 0.0
+    quantities = {k:0 for k in ITEM_PRICES.keys()}
+    subtotals = {k:0.0 for k in ITEM_PRICES.keys()}
+
+    for item, qty in orders:
+        price = ITEM_PRICES.get(item, 0)
+        subtotal = round(qty * price, 2)
+        total += subtotal
+        quantities[item] = qty
+        subtotals[item] = subtotal
+        cart_items.append({
+            'name': PRODUCT_NAMES.get(item, item),
+            'qty': qty,
+            'price': price,
+            'subtotal': subtotal
+        })
+
+    total = round(total, 2)
+
     if request.method == 'POST':
-        flash("Payment processed successfully!")
+        with sqlite3.connect(DB_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                INSERT INTO completed_orders (
+                    username, order_date,
+                    sausage_roll_qty, sausage_roll_subtotal,
+                    plain_pie_qty, plain_pie_subtotal,
+                    chicken_burger_qty, chicken_burger_subtotal,
+                    nuggets_qty, nuggets_subtotal,
+                    total
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                username, order_date,
+                quantities['sausage_roll'], subtotals['sausage_roll'],
+                quantities['plain_pie'], subtotals['plain_pie'],
+                quantities['chicken_burger'], subtotals['chicken_burger'],
+                quantities['nuggets'], subtotals['nuggets'],
+                total
+            ))
+            # Clear hot_food_orders cart
+            cursor.execute("DELETE FROM hot_food_orders WHERE username = ?", (username,))
+            conn.commit()
+
+        flash("Payment successful! Your order has been recorded.")
         return redirect(url_for('home'))
 
-    return render_template('payment.html')
+    return render_template('payment.html', cart_items=cart_items, total=total, order_date=order_date)
 
 if __name__ == '__main__':
     init_db()

@@ -1,28 +1,49 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Payment</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body id="payment-page-body">
 
-  <div style="max-width: 600px; margin: auto; padding: 20px;">
+  <div class="page-container">
+
+    <!-- Back arrow top-right -->
+    <a href="{{ url_for('food_selection') }}" class="back-arrow" title="Back to food selection">&#8592;</a>
+
     <h2>Payment Page</h2>
-    
-    <p>Thank you for selecting your items. Please proceed with your payment below.</p>
 
-    <form method="POST" action="{{ url_for('payment') }}">
-      <label for="card_number">Card Number:</label><br>
-      <input type="text" id="card_number" name="card_number" required><br><br>
+    <div class="cart-summary">
+      <h3>Your Order</h3>
+      {% if cart_items %}
+        <ul>
+          {% for item in cart_items %}
+            <li>
+              {{ item.qty }} × {{ item.name }} @ ${{ '%.2f' % item.price }} each = 
+              <strong>${{ '%.2f' % item.subtotal }}</strong>
+            </li>
+          {% endfor %}
+        </ul>
+        <p class="total">Total: ${{ '%.2f' % total }}</p>
+        <p class="order-date">Order Date: {{ order_date }}</p>
+      {% else %}
+        <p>Your cart is empty.</p>
+      {% endif %}
+    </div>
 
-      <label for="expiry">Expiry Date:</label><br>
-      <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required><br><br>
+    <form method="POST" action="{{ url_for('payment') }}" class="form-block">
+      <label for="card_number">Card Number:</label>
+      <input type="text" id="card_number" name="card_number" required>
 
-      <label for="cvv">CVV:</label><br>
-      <input type="text" id="cvv" name="cvv" required><br><br>
+      <label for="expiry">Expiry Date (MM/YY):</label>
+      <input type="text" id="expiry" name="expiry" required>
 
-      <input type="submit" value="Pay Now" style="padding: 10px 20px;">
+      <label for="cvv">CVV:</label>
+      <input type="text" id="cvv" name="cvv" required>
+
+      <button type="submit" class="food-button">Pay Now</button>
     </form>
   </div>
 

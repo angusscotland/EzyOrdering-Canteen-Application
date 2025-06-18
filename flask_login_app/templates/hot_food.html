@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hot Food</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     #date-container {
+      position: relative;
       max-height: 80vh;
       overflow-y: auto;
-      padding: 10px;
+      padding: 40px 10px 10px 10px; /* extra top padding for arrow */
       border: 1px solid #ccc;
       border-radius: 8px;
       max-width: 400px;
@@ -18,11 +20,34 @@
     .item-block {
       margin-bottom: 20px;
     }
+    #back-arrow1 {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 26px;
+      cursor: pointer;
+      color: #000000;
+      background: transparent;
+      border: none;
+      padding: 0;
+      line-height: 1;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    #back-arrow1:hover {
+      color: #c1c423;
+    }
   </style>
 </head>
 <body id="date-page-body">
 
   <div id="date-container">
+
+    <!-- Back Arrow Link -->
+    <a href="{{ url_for('food_selection') }}" title="Back to Food Selection" id="back-arrow1" aria-label="Back">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+
     <h2>Hot Food Selection</h2>
 
     <form method="POST" enctype="multipart/form-data" id="hotFoodForm">

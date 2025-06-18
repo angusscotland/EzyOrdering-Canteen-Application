@@ -411,3 +411,170 @@ body {
   transform: translateY(0);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
+
+
+
+
+/* Global page container */
+.page-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Cart summary styling */
+.cart-summary {
+  margin-bottom: 30px;
+}
+.cart-summary h3 {
+  margin-bottom: 15px;
+  color: #2a7ae2;
+}
+.cart-summary ul {
+  list-style: none;
+  padding: 0;
+}
+.cart-summary li {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.cart-summary .total {
+  font-size: 18px;
+  font-weight: bold;
+  color: #28a745;
+  margin-top: 10px;
+}
+.cart-summary .order-date {
+  margin-top: 5px;
+  font-style: italic;
+  color: #555;
+}
+
+/* Form styling consistent with previous pages */
+/* General body styling */
+body {
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Page layout container */
+.page-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 30px 40px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+
+
+/* Cart summary section */
+.cart-summary {
+  margin-top: 20px;
+  background-color: #f1f7ff;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #d3e4ff;
+}
+.cart-summary h3 {
+  margin-top: 0;
+}
+.cart-summary ul {
+  padding-left: 20px;
+  margin: 0 0 10px 0;
+}
+.cart-summary li {
+  margin-bottom: 6px;
+}
+.cart-summary .total,
+.cart-summary .order-date {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Form styling */
+.form-block label {
+  display: block;
+  font-weight: bold;
+  margin-top: 12px;
+}
+.form-block input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.form-block .food-button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.form-block .food-button:hover {
+  background-color: #a8be2b;
+}
+
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  text-decoration: none;
+  font-size: 26px;              /* Slightly bigger for emphasis */
+  font-weight: 800;             /* Increased boldness */
+  color: #000000;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.back-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* Subtle hover */
+  color: #a6c424;
+}
+
+#date-container {
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 40px 10px 10px 10px; /* extra top padding for arrow */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: auto;
+}
+
+.item-block {
+  margin-bottom: 20px;
+}
+
+#back-arrow1 {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 26px;
+  cursor: pointer;
+  color: #000000;
+  background: transparent;
+  border: none;
+  padding: 0;
+  line-height: 1;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#back-arrow1:hover {
+  color: #aeb829;
+}
+
