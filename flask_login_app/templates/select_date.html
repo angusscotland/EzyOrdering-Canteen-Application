@@ -16,5 +16,24 @@
     </form>
   </div>
 
+  <script>
+    const calendarInput = document.getElementById('calendar-input');
+
+    calendarInput.addEventListener('input', function () {
+      const selectedDate = new Date(this.value);
+      const day = selectedDate.getDay();
+      
+      if (day === 0 || day === 6) {
+        alert("Please select a weekday. Orders are not available on Saturdays or Sundays.");
+        this.value = '';
+      }
+    });
+
+    // Optional: Disable weekends visually in browsers that support `min` and `max`
+    // This part just limits the range, but you still need JS to block weekends
+    const today = new Date().toISOString().split('T')[0];
+    calendarInput.setAttribute('min', today);
+  </script>
+
 </body>
 </html>
