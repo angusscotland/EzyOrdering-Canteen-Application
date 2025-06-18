@@ -8,6 +8,14 @@ app.secret_key = 'your_secret_key'
 
 DB_PATH = Path('users.db')
 
+# Prices for hot food items
+ITEM_PRICES = {
+    'sausage_roll': 4.50,
+    'plain_pie': 5.50,
+    'chicken_burger': 6.00,
+    'nuggets': 4.00
+}
+
 def init_db():
     if not DB_PATH.exists():
         with sqlite3.connect(DB_PATH) as conn:
@@ -35,10 +43,6 @@ def init_db():
             ''')
 
 def save_order_to_db(username, order_items):
-    """
-    Save order items to the hot_food_orders table with username.
-    order_items: dict of item_name (str) -> quantity (int)
-    """
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         for item, qty in order_items.items():
@@ -78,7 +82,6 @@ def register():
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
-        # Password validation rules
         if password != confirm_password:
             flash('Passwords do not match.')
         elif len(password) < 8 or len(password) > 30:
@@ -138,13 +141,30 @@ def food_selection():
     username = session['username']
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
+        # Get the sum of quantities per item for the user
         cursor.execute(
             "SELECT item, SUM(quantity) FROM hot_food_orders WHERE username = ? GROUP BY item",
             (username,)
         )
         orders = cursor.fetchall()
 
-    return render_template('food_selection.html', orders=orders)
+    cart_items = []
+    total = 0.0
+    for item, qty in orders:
+        price = ITEM_PRICES.get(item, 0)
+        subtotal = round(qty * price, 2)
+        total += subtotal
+        cart_items.append({
+            'name': item.replace('_', ' ').title(),
+            'qty': qty,
+            'price': price,
+            'subtotal': subtotal
+        })
+
+    total = round(total, 2)
+
+    return render_template('food_selection.html', cart_items=cart_items, total=total)
+
 
 @app.route('/clear_cart', methods=['POST'])
 def clear_cart():
@@ -178,18 +198,28 @@ def hot_food():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        order_items = {
-            'sausage_roll': int(request.form.get('sausage_roll_qty', 0)),
-            'plain_pie': int(request.form.get('plain_pie_qty', 0)),
-            'chicken_burger': int(request.form.get('chicken_burger_qty', 0)),
-            'nuggets': int(request.form.get('nuggets_qty', 0))
-        }
+        order_items = {}
+        for item in ITEM_PRICES.keys():
+            qty = int(request.form.get(f'{item}_qty', 0))
+            if qty > 0:
+                order_items[item] = qty
 
         save_order_to_db(session['username'], order_items)
 
         return redirect(url_for('food_selection'))
 
     return render_template('hot_food.html')
+
+@app.route('/payment', methods=['GET', 'POST'])
+def payment():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        flash("Payment processed successfully!")
+        return redirect(url_for('home'))
+
+    return render_template('payment.html')
 
 if __name__ == '__main__':
     init_db()

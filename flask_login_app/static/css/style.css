@@ -314,7 +314,7 @@ body {
 
 .food-selection-container h1 {
   font-size: 2.5rem;
-  color: #ff6f61;
+  color: #000000;
   margin-bottom: 30px;
   letter-spacing: 1px;
 }
@@ -330,25 +330,25 @@ body {
   padding: 15px 0;
   font-size: 1.3rem;
   color: white;
-  background: #ff6f61;
+  background: #000000;
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 5px 15px rgba(255, 111, 97, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
   transition: background 0.3s ease, transform 0.2s ease;
   font-weight: 600;
   letter-spacing: 0.05em;
 }
 
 .food-button:hover {
-  background: #ff836f;
+  background: #d4c434;
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(255, 131, 111, 0.6);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
 .food-button:active {
   transform: translateY(0);
-  box-shadow: 0 5px 15px rgba(255, 111, 97, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
 .back-home {
@@ -356,7 +356,7 @@ body {
 }
 
 .back-button {
-  background: #4a90e2;
+  background: #000000;
   width: 100%;
   padding: 14px 0;
   font-size: 1.2rem;
@@ -364,19 +364,50 @@ body {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
   transition: background 0.3s ease, transform 0.2s ease;
   font-weight: 600;
   letter-spacing: 0.05em;
 }
 
 .back-button:hover {
-  background: #6ba0ff;
+  background: #acc424;
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(107, 160, 255, 0.6);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
 .back-button:active {
   transform: translateY(0);
-  box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.payment-button-wrapper {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+}
+
+.payment-button {
+  background: #000000;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.payment-button:hover {
+  background: #d4c434;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+.payment-button:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }

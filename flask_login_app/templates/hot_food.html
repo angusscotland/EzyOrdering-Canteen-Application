@@ -1,68 +1,110 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hot Food</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    #date-container {
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: auto;
+    }
+    .item-block {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body id="date-page-body">
 
   <div id="date-container">
     <h2>Hot Food Selection</h2>
-    <form method="POST" enctype="multipart/form-data">
+
+    <form method="POST" enctype="multipart/form-data" id="hotFoodForm">
 
       <!-- Sausage Roll -->
-      <div style="margin-bottom: 20px;">
+      <div class="item-block">
         <img src="{{ url_for('static', filename='images/Sausage.jpg') }}" alt="Sausage Roll" style="width: 200px; height: auto; border-radius: 8px;">
         <p><strong>Description:</strong> Plain Sausage Roll</p>
+        <p><strong>Price:</strong> $4.50</p>
         <label for="sausage_roll_qty">Quantity:</label>
-        <select name="sausage_roll_qty" id="sausage_roll_qty">
+        <select name="sausage_roll_qty" id="sausage_roll_qty" data-price="4.50">
           {% for i in range(0, 11) %}
-            <option value="{{ i }}">{{ i }}</option>
+            <option value="{{ i }}">{{ i }} (${{ '%.2f' % (i * 4.50) }})</option>
           {% endfor %}
         </select>
       </div>
 
       <!-- Plain Pie -->
-      <div style="margin-bottom: 20px;">
-        <img src="{{ url_for('static', filename='images/plain_pie.jpg') }}" alt="Plain Pie" style="width: 200px; height: auto; border-radius: 8px;">
+      <div class="item-block">
+        <img src="{{ url_for('static', filename='images/Pie.jpg') }}" alt="Plain Pie" style="width: 200px; height: auto; border-radius: 8px;">
         <p><strong>Description:</strong> Plain Pie</p>
+        <p><strong>Price:</strong> $5.50</p>
         <label for="plain_pie_qty">Quantity:</label>
-        <select name="plain_pie_qty" id="plain_pie_qty">
+        <select name="plain_pie_qty" id="plain_pie_qty" data-price="5.50">
           {% for i in range(0, 11) %}
-            <option value="{{ i }}">{{ i }}</option>
+            <option value="{{ i }}">{{ i }} (${{ '%.2f' % (i * 5.50) }})</option>
           {% endfor %}
         </select>
       </div>
 
       <!-- Chicken Burger -->
-      <div style="margin-bottom: 20px;">
-        <img src="{{ url_for('static', filename='images/chicken_burger.jpg') }}" alt="Chicken Burger" style="width: 200px; height: auto; border-radius: 8px;">
+      <div class="item-block">
+        <img src="{{ url_for('static', filename='images/Burger.jpg') }}" alt="Chicken Burger" style="width: 200px; height: auto; border-radius: 8px;">
         <p><strong>Description:</strong> Chicken Burger</p>
+        <p><strong>Price:</strong> $6.00</p>
         <label for="chicken_burger_qty">Quantity:</label>
-        <select name="chicken_burger_qty" id="chicken_burger_qty">
+        <select name="chicken_burger_qty" id="chicken_burger_qty" data-price="6.00">
           {% for i in range(0, 11) %}
-            <option value="{{ i }}">{{ i }}</option>
+            <option value="{{ i }}">{{ i }} (${{ '%.2f' % (i * 6.00) }})</option>
           {% endfor %}
         </select>
       </div>
 
       <!-- Nuggets -->
-      <div style="margin-bottom: 20px;">
-        <img src="{{ url_for('static', filename='images/nuggets.jpg') }}" alt="Nuggets" style="width: 200px; height: auto; border-radius: 8px;">
+      <div class="item-block">
+        <img src="{{ url_for('static', filename='images/Nuggets.jpg') }}" alt="Nuggets" style="width: 200px; height: auto; border-radius: 8px;">
         <p><strong>Description:</strong> Nuggets</p>
+        <p><strong>Price:</strong> $4.00</p>
         <label for="nuggets_qty">Quantity:</label>
-        <select name="nuggets_qty" id="nuggets_qty">
+        <select name="nuggets_qty" id="nuggets_qty" data-price="4.00">
           {% for i in range(0, 11) %}
-            <option value="{{ i }}">{{ i }}</option>
+            <option value="{{ i }}">{{ i }} (${{ '%.2f' % (i * 4.00) }})</option>
           {% endfor %}
         </select>
       </div>
+
+      <p><strong>Total: $<span id="totalPrice">0.00</span></strong></p>
 
       <input type="submit" value="Add to Order" id="date-button">
 
     </form>
   </div>
+
+  <script>
+    function updateTotal() {
+      let total = 0;
+      document.querySelectorAll('select[data-price]').forEach(select => {
+        const price = parseFloat(select.getAttribute('data-price'));
+        const qty = parseInt(select.value);
+        total += price * qty;
+      });
+      document.getElementById('totalPrice').textContent = total.toFixed(2);
+    }
+
+    // Update total on page load
+    updateTotal();
+
+    // Add event listeners to each select to update total on change
+    document.querySelectorAll('select[data-price]').forEach(select => {
+      select.addEventListener('change', updateTotal);
+    });
+  </script>
 
 </body>
 </html>

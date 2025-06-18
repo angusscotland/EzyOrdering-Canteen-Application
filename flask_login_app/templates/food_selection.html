@@ -5,9 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Food Selection</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .cart-summary {
+      margin-top: 30px;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+      max-height: 250px; /* Scroll box height */
+      overflow-y: auto;
+    }
+    .cart-summary ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    .cart-summary li {
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    .cart-summary strong.total {
+      font-size: 18px;
+      color: #2a7ae2;
+      display: block;
+      margin-top: 10px;
+    }
+    .clear-cart-btn {
+      margin-top: 10px;
+      padding: 8px 14px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .clear-cart-btn:hover {
+      background-color: #c0392b;
+    }
+    .food-button {
+      padding: 12px 20px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <div class="food-selection-container">
+  <div class="food-selection-container" style="position: relative; max-width: 600px; margin: auto;">
+
+    <!-- Shopping Cart Icon Button -->
+    <div style="position: absolute; top: 20px; right: 20px;">
+      <a href="{{ url_for('payment') }}">
+        <button class="food-button" style="padding: 12px 16px; width: auto;">
+          <i class="fas fa-shopping-cart"></i>
+        </button>
+      </a>
+    </div>
+
     <h1>Select Food Category</h1>
 
     <a href="{{ url_for('hot_food') }}">
@@ -26,23 +78,29 @@
       <button class="food-button">Desserts</button>
     </a>
 
-    <div class="back-home">
+    <div class="back-home" style="margin-top: 20px;">
       <a href="{{ url_for('home') }}">
-        <button class="back-button">Back to Home</button>
+        <button class="food-button back-button">Back to Home</button>
       </a>
     </div>
 
     <!-- Cart Summary Section -->
-    <div class="cart-summary" style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px;">
+    <div class="cart-summary">
       <h2>Your Cart</h2>
-      {% if orders %}
+      {% if cart_items %}
         <ul>
-          {% for item, qty in orders %}
-            <li>{{ qty }} × {{ item.replace('_', ' ').title() }}</li>
+          {% for item in cart_items %}
+            <li>
+              {{ item.qty }} × {{ item.name }} @ ${{ '%.2f' % item.price }} each = 
+              <strong>${{ '%.2f' % item.subtotal }}</strong>
+            </li>
           {% endfor %}
         </ul>
+
+        <p><strong class="total">Total: ${{ '%.2f' % total }}</strong></p>
+
         <form method="POST" action="{{ url_for('clear_cart') }}">
-          <button type="submit">Clear Cart</button>
+          <button type="submit" class="clear-cart-btn">Clear Cart</button>
         </form>
       {% else %}
         <p>Your cart is empty.</p>
