@@ -4,9 +4,44 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    #login-container {
+      position: relative;
+      width: 350px;
+      margin: 80px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #f9f9f9;
+      text-align: center;
+    }
+
+    .corner-image {
+      position: absolute;
+      width: 40px; /* Adjust size as needed */
+      height: auto;
+    }
+
+    .top-left {
+      top: 10px;
+      left: 10px;
+    }
+
+    .top-right {
+      top: 10px;
+      right: 10px;
+    }
+  </style>
 </head>
 <body id="login-body">
   <div id="login-container">
+    <!-- Top-left image -->
+    <img src="{{ url_for('static', filename='images/MHS.jpg') }}" class="corner-image top-left" alt="Left Logo">
+
+    <!-- Top-right image -->
+    <img src="{{ url_for('static', filename='images/MHS.jpg') }}" class="corner-image top-right" alt="Right Logo">
+
     <h2 id="login-title">Ezy Ordering Login</h2>
 
     {% with messages = get_flashed_messages() %}

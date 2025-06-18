@@ -4,10 +4,18 @@
   <meta charset="UTF-8">
   <title>Select Date</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body id="date-page-body">
 
   <div id="date-container">
+    <!-- Back Arrow -->
+    <a href="{{ url_for('home') }}" title="Back to Home" style="text-decoration: none;">
+      <button id="back-arrow2" aria-label="Back to Home">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </a>
+
     <h2>Select a Date</h2>
     <form method="POST" action="{{ url_for('select_date') }}">
       <input type="date" name="order_date" id="calendar-input" required>
@@ -29,8 +37,6 @@
       }
     });
 
-    // Optional: Disable weekends visually in browsers that support `min` and `max`
-    // This part just limits the range, but you still need JS to block weekends
     const today = new Date().toISOString().split('T')[0];
     calendarInput.setAttribute('min', today);
   </script>

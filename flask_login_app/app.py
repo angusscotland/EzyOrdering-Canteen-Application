@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import sqlite3
 from pathlib import Path
 import re
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -48,7 +49,6 @@ def init_db():
                     quantity INTEGER NOT NULL
                 )
             ''')
-            # Now completed_orders table with columns for each item qty and subtotal
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS completed_orders (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,13 +90,13 @@ def login():
         password = request.form['password']
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
-            user = cursor.fetchone()
-        if user:
-            session['username'] = username
-            return redirect(url_for('home'))
-        else:
-            flash('Login failed. Check your username and password.')
+            cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
+            row = cursor.fetchone()
+            if row and bcrypt.checkpw(password.encode('utf-8'), row[0]):
+                session['username'] = username
+                return redirect(url_for('home'))
+            else:
+                flash('Login failed. Check your username and password.')
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -117,9 +117,10 @@ def register():
         elif not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
             flash('Password must contain at least one special character.')
         else:
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
             try:
                 with sqlite3.connect(DB_PATH) as conn:
-                    conn.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+                    conn.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
                 flash('Registered successfully! You can now log in.')
                 return redirect(url_for('login'))
             except sqlite3.IntegrityError:
@@ -255,7 +256,6 @@ def payment():
         date_row = cursor.fetchone()
         order_date = date_row[0] if date_row else None
 
-    # Build cart_items list for template
     cart_items = []
     total = 0.0
     quantities = {k:0 for k in ITEM_PRICES.keys()}
@@ -296,7 +296,6 @@ def payment():
                 quantities['nuggets'], subtotals['nuggets'],
                 total
             ))
-            # Clear hot_food_orders cart
             cursor.execute("DELETE FROM hot_food_orders WHERE username = ?", (username,))
             conn.commit()
 

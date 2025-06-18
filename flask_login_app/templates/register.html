@@ -27,11 +27,25 @@
       font-weight: bold;
       color: rgb(0, 0, 0);
     }
+
+    #password-checklist {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .requirement {
+      margin: 3px 0;
+    }
+
+    .requirement span {
+      margin-right: 6px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body id="login-body">
   <div id="login-container">
-    <h2 id="login-title">Register</h2>
+    <h2 id="login-title">Registration</h2>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -54,6 +68,13 @@
       </div>
       <p id="strength-text">Password strength: <span>Very Weak</span></p>
 
+      <div id="password-checklist">
+        <div class="requirement" id="length-req"><span>❌</span> Minimum 8 characters</div>
+        <div class="requirement" id="uppercase-req"><span>❌</span> At least one uppercase letter</div>
+        <div class="requirement" id="number-req"><span>❌</span> At least one number</div>
+        <div class="requirement" id="special-req"><span>❌</span> At least one special character</div>
+      </div>
+
       <label for="confirm-password">Confirm Password:</label>
       <input type="password" name="confirm_password" id="confirm-password" required><br>
 
@@ -68,14 +89,34 @@
     const strengthBar = document.getElementById("strength-bar");
     const strengthText = document.getElementById("strength-text").querySelector("span");
 
+    const lengthReq = document.getElementById("length-req");
+    const uppercaseReq = document.getElementById("uppercase-req");
+    const numberReq = document.getElementById("number-req");
+    const specialReq = document.getElementById("special-req");
+
+    function updateRequirement(el, passed) {
+      el.querySelector("span").textContent = passed ? "✔️" : "❌";
+      el.style.color = passed ? "green" : "red";
+    }
+
     passwordInput.addEventListener("input", () => {
       const value = passwordInput.value;
       let strength = 0;
 
-      if (value.length >= 8) strength += 1;
-      if (/[A-Z]/.test(value)) strength += 1;
-      if (/[0-9]/.test(value)) strength += 1;
-      if (/[^A-Za-z0-9]/.test(value)) strength += 1;
+      const lengthValid = value.length >= 8;
+      const uppercaseValid = /[A-Z]/.test(value);
+      const numberValid = /[0-9]/.test(value);
+      const specialValid = /[^A-Za-z0-9]/.test(value);
+
+      updateRequirement(lengthReq, lengthValid);
+      updateRequirement(uppercaseReq, uppercaseValid);
+      updateRequirement(numberReq, numberValid);
+      updateRequirement(specialReq, specialValid);
+
+      if (lengthValid) strength++;
+      if (uppercaseValid) strength++;
+      if (numberValid) strength++;
+      if (specialValid) strength++;
 
       const strengthPercentage = (strength / 4) * 100;
       strengthBar.style.width = strengthPercentage + "%";

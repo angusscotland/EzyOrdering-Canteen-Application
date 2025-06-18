@@ -28,7 +28,7 @@ body {
 /* Title style */ 
 h1 {
     font-size: 36px;
-    color: #aa9310; 
+    color: #000000; 
 }
 
 /*Welcome message */
@@ -109,7 +109,7 @@ button:hover {
     display: block;
     margin-top: 15px;
     color: #007BFF;
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 #register-link:hover {
@@ -578,3 +578,34 @@ body {
   color: #aeb829;
 }
 
+#back-arrow2 {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2a7ae2;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#back-arrow2 {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2a7ae2;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px; /* Ensure padding is always applied */
+  border-radius: 50%; /* So hover background shape stays the same */
+  transition: background-color 0.2s ease; /* Smooth hover effect */
+}
+
+#back-arrow2:hover {
+  color: #1a5bb8;
+  background-color: rgba(42, 122, 226, 0.1);
+}
