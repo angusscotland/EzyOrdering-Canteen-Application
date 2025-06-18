@@ -3,13 +3,21 @@ import sqlite3
 from pathlib import Path
 import re
 import bcrypt
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
+# Rate Limiter setup
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"]
+)
+
 DB_PATH = Path('users.db')
 
-# Prices and display names for hot food items
 ITEM_PRICES = {
     'sausage_roll': 4.50,
     'plain_pie': 5.50,
@@ -27,54 +35,29 @@ PRODUCT_NAMES = {
 def init_db():
     if not DB_PATH.exists():
         with sqlite3.connect(DB_PATH) as conn:
-            conn.execute('''
-                CREATE TABLE users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL
-                )
-            ''')
-            conn.execute('''
-                CREATE TABLE dates (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL,
-                    date TEXT NOT NULL
-                )
-            ''')
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS hot_food_orders (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL,
-                    item TEXT NOT NULL,
-                    quantity INTEGER NOT NULL
-                )
-            ''')
-            conn.execute('''
-                CREATE TABLE IF NOT EXISTS completed_orders (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL,
-                    order_date TEXT NOT NULL,
-                    sausage_roll_qty INTEGER DEFAULT 0,
-                    sausage_roll_subtotal REAL DEFAULT 0,
-                    plain_pie_qty INTEGER DEFAULT 0,
-                    plain_pie_subtotal REAL DEFAULT 0,
-                    chicken_burger_qty INTEGER DEFAULT 0,
-                    chicken_burger_subtotal REAL DEFAULT 0,
-                    nuggets_qty INTEGER DEFAULT 0,
-                    nuggets_subtotal REAL DEFAULT 0,
-                    total REAL NOT NULL
-                )
-            ''')
+            conn.execute('''CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL)''')
+            conn.execute('''CREATE TABLE dates (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, date TEXT NOT NULL)''')
+            conn.execute('''CREATE TABLE IF NOT EXISTS hot_food_orders (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, item TEXT NOT NULL, quantity INTEGER NOT NULL)''')
+            conn.execute('''CREATE TABLE IF NOT EXISTS completed_orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                order_date TEXT NOT NULL,
+                sausage_roll_qty INTEGER DEFAULT 0,
+                sausage_roll_subtotal REAL DEFAULT 0,
+                plain_pie_qty INTEGER DEFAULT 0,
+                plain_pie_subtotal REAL DEFAULT 0,
+                chicken_burger_qty INTEGER DEFAULT 0,
+                chicken_burger_subtotal REAL DEFAULT 0,
+                nuggets_qty INTEGER DEFAULT 0,
+                nuggets_subtotal REAL DEFAULT 0,
+                total REAL NOT NULL)''')
 
 def save_order_to_db(username, order_items):
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         for item, qty in order_items.items():
             if qty > 0:
-                cursor.execute(
-                    "INSERT INTO hot_food_orders (username, item, quantity) VALUES (?, ?, ?)",
-                    (username, item, qty)
-                )
+                cursor.execute("INSERT INTO hot_food_orders (username, item, quantity) VALUES (?, ?, ?)", (username, item, qty))
         conn.commit()
 
 @app.route('/')
@@ -84,6 +67,7 @@ def index():
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -100,6 +84,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
+@limiter.limit("3 per minute")
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -166,12 +151,8 @@ def food_selection():
     username = session['username']
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
-        cursor.execute(
-            "SELECT item, SUM(quantity) FROM hot_food_orders WHERE username = ? GROUP BY item",
-            (username,)
-        )
+        cursor.execute("SELECT item, SUM(quantity) FROM hot_food_orders WHERE username = ? GROUP BY item", (username,))
         orders = cursor.fetchall()
-
         cursor.execute("SELECT date FROM dates WHERE username = ? ORDER BY id DESC LIMIT 1", (username,))
         date_row = cursor.fetchone()
         order_date = date_row[0] if date_row else None
@@ -190,7 +171,6 @@ def food_selection():
         })
 
     total = round(total, 2)
-
     return render_template('food_selection.html', cart_items=cart_items, total=total, order_date=order_date)
 
 @app.route('/clear_cart', methods=['POST'])
@@ -230,28 +210,22 @@ def hot_food():
             qty = int(request.form.get(f'{item}_qty', 0))
             if qty > 0:
                 order_items[item] = qty
-
         save_order_to_db(session['username'], order_items)
-
         return redirect(url_for('food_selection'))
 
     return render_template('hot_food.html')
 
 @app.route('/payment', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
 def payment():
     if 'username' not in session:
         return redirect(url_for('login'))
 
     username = session['username']
-
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
-        cursor.execute(
-            "SELECT item, SUM(quantity) FROM hot_food_orders WHERE username = ? GROUP BY item",
-            (username,)
-        )
+        cursor.execute("SELECT item, SUM(quantity) FROM hot_food_orders WHERE username = ? GROUP BY item", (username,))
         orders = cursor.fetchall()
-
         cursor.execute("SELECT date FROM dates WHERE username = ? ORDER BY id DESC LIMIT 1", (username,))
         date_row = cursor.fetchone()
         order_date = date_row[0] if date_row else None
@@ -279,16 +253,7 @@ def payment():
     if request.method == 'POST':
         with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
-            cursor.execute('''
-                INSERT INTO completed_orders (
-                    username, order_date,
-                    sausage_roll_qty, sausage_roll_subtotal,
-                    plain_pie_qty, plain_pie_subtotal,
-                    chicken_burger_qty, chicken_burger_subtotal,
-                    nuggets_qty, nuggets_subtotal,
-                    total
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
+            cursor.execute('''INSERT INTO completed_orders (username, order_date, sausage_roll_qty, sausage_roll_subtotal, plain_pie_qty, plain_pie_subtotal, chicken_burger_qty, chicken_burger_subtotal, nuggets_qty, nuggets_subtotal, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (
                 username, order_date,
                 quantities['sausage_roll'], subtotals['sausage_roll'],
                 quantities['plain_pie'], subtotals['plain_pie'],
@@ -298,7 +263,6 @@ def payment():
             ))
             cursor.execute("DELETE FROM hot_food_orders WHERE username = ?", (username,))
             conn.commit()
-
         flash("Payment successful! Your order has been recorded.")
         return redirect(url_for('home'))
 
